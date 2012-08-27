@@ -11,6 +11,7 @@
 	//connect to database;
 		require_once("connect.php");
 	?>
+	
 	<form action="resultView.php" method="GET">
 		<br>Wine Name:
 		<input type="text" name="wineName">
@@ -66,6 +67,7 @@
 			}
 			echo '</select>';
 		?>
+		
 		<br>Minimum number of wine in stock:
 		<input type="text" name="minimumNumberOfWineInStock">
 		<br>Minimum number of wine ordered:
