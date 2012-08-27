@@ -1,5 +1,14 @@
 <?php 
 require_once("connect.php");
+define("USER_HOME_DIR", "Smarty-3.1.11"); // CHANGE HERE
+require(USER_HOME_DIR . "/libs/Smarty.class.php");
+
+$smarty = new Smarty();
+$smarty->template_dir = "Smarty-Work-Dir/templates";
+$smarty->compile_dir = "Smarty-Work-Dir/templates_c";
+$smarty->cache_dir = "Smarty-Work-Dir/cache";
+$smarty->config_dir = "Smarty-Work-Dir/configs";
+
 
 	//function declaration
 		function IsNullOrEmptyString($question){
@@ -13,7 +22,7 @@ require_once("connect.php");
 		$yearLowerBound=$_GET["yearLowerBound"];
 		$yearUpperBound=$_GET["yearUpperBound"];
 		$wineryName=$_GET["wineryName"];
-		$region=$_GET["Region"];
+		$region=$_GET["region"];
 		$minimumCost=$_GET["minimumCost"];
 		$maximumCost=$_GET["maximumCost"];
 		$minimumNumberOfWineInStock=$_GET["minimumNumberOfWineInStock"];
@@ -22,8 +31,6 @@ require_once("connect.php");
 		$validInput=true;
 		$inputError;
 	//end of variable assign
-		
-		
 		
 	//input validation
 		if($yearLowerBound>$yearUpperBound){
@@ -81,7 +88,6 @@ require_once("connect.php");
 	
 	if($validInput==true)
 	{
-		echo '<h1>Winestore Result!!!<h1>';
 		//querry with wines that have order recorded
 		$query = "select * from final_print_with_order_view 
 		where wine_name like '%{$wineName}%' 
@@ -94,48 +100,25 @@ require_once("connect.php");
 		{$minimumNumberOfWineOrderedCondition}
 		";
 		
-		//echo $query;
-		echo '<br>';
-		echo '<h3>Listing of wine with ordered recorded</h3>';
 		
 		$result = mysql_query($query, $dbconn);
 		
-		if(mysql_num_rows($result)>0)
+		while($row=mysql_fetch_array($result))
 		{
-			echo '
-			<table border="1">
-			<tr>
-				<td>wine id</td>
-				<td>wine name</td>
-				<td>grape variety</td>
-				<td>year</td>
-				<td>winery name</td>
-				<td>region name</td>
-				<td>cost</td>
-				<td>on hand</td>
-				<td>amount sold</td>
-				<td>revenue</td>
-			</tr>';
-			while($row=mysql_fetch_array($result))
-			{
-				echo '
-				<tr>
-					<td>'.$row['wine_id'].'</td>
-					<td>'.$row['wine_name'].'</td>
-					<td>'.$row['variety'].'</td>
-					<td>'.$row['year'].'</td>
-					<td>'.$row['winery_name'].'</td>
-					<td>'.$row['region_name'].'</td>
-					<td>'.$row['cost'].'</td>
-					<td>'.$row['on_hand'].'</td>
-					<td>'.$row['amount_sold'].'</td>
-					<td>'.$row['revenue'].'</td>
-				</tr>';
-			}
-			echo '</table>';
-		}else{
-			echo 'no result found';
+			$mylist[$row['wine_id']]['wine_id']=$row['wine_id'];
+			$mylist[$row['wine_id']]['wine_name']=$row['wine_name'];
+			$mylist[$row['wine_id']]['variety']=$row['variety'];
+			$mylist[$row['wine_id']]['year']=$row['year'];
+			$mylist[$row['wine_id']]['winery_name']=$row['winery_name'];
+			$mylist[$row['wine_id']]['region_name']=$row['region_name'];
+			$mylist[$row['wine_id']]['cost']=$row['cost'];
+			$mylist[$row['wine_id']]['on_hand']=$row['on_hand'];
+			$mylist[$row['wine_id']]['amount_sold']=$row['amount_sold'];
+			$mylist[$row['wine_id']]['revenue']=$row['revenue'];
 		}
+		
+		$smarty->assign("mylist",$mylist);
+
 		
 	//querry to get wines with no order yet
 		$query = "select * from final_print_no_order_view 
@@ -147,44 +130,30 @@ require_once("connect.php");
 		{$minimumCostCondition} {$maximumCostCondition}
 		{$minimumNumberOfWineInstockCondition}
 		";
-		echo '<h3>Listing of wine that have no order recorded</h3>';
 		
-
+		
 		$result = mysql_query($query, $dbconn);
-		if(mysql_num_rows($result)>0)
+		
+		while($row=mysql_fetch_array($result))
 		{
-			echo '
-			<table border="1">
-			<tr>
-				<td>wine id</td>
-				<td>wine name</td>
-				<td>grape variety</td>
-				<td>year</td>
-				<td>winery name</td>
-				<td>region name</td>
-				<td>cost</td>
-				<td>on hand</td>
-			</tr>';
-			
-			while($row=mysql_fetch_array($result))
-			{
-				echo '
-				<tr>
-					<td>'.$row['wine_id'].'</td>
-					<td>'.$row['wine_name'].'</td>
-					<td>'.$row['variety'].'</td>
-					<td>'.$row['year'].'</td>
-					<td>'.$row['winery_name'].'</td>
-					<td>'.$row['region_name'].'</td>
-					<td>'.$row['cost'].'</td>
-					<td>'.$row['on_hand'].'</td>
-				</tr>';
-			}
-			echo '</table>';
-		}else{
-			echo 'no result found';
+			$mylist2[$row['wine_id']]['wine_id']=$row['wine_id'];
+			$mylist2[$row['wine_id']]['wine_name']=$row['wine_name'];
+			$mylist2[$row['wine_id']]['variety']=$row['variety'];
+			$mylist2[$row['wine_id']]['year']=$row['year'];
+			$mylist2[$row['wine_id']]['winery_name']=$row['winery_name'];
+			$mylist2[$row['wine_id']]['region_name']=$row['region_name'];
+			$mylist2[$row['wine_id']]['cost']=$row['cost'];
+			$mylist2[$row['wine_id']]['on_hand']=$row['on_hand'];
 		}
+		
+		$smarty->assign("mylist2",$mylist2);
+		$smarty->display('resultView.tpl');
 	}
+
+
+//chu y cai valley bi sai roi, region do
+//thu chon region goulburn valley
+//nen dung cai sql cua phan E luon cho chac
 ?>
 
 
