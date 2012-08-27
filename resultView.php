@@ -23,6 +23,8 @@ require_once("connect.php");
 		$inputError;
 	//end of variable assign
 		
+		
+		
 	//input validation
 		if($yearLowerBound>$yearUpperBound){
 			$inputError= 'Year lower bound should be less than or equal to year upper bound <br>';
@@ -147,7 +149,6 @@ require_once("connect.php");
 		";
 		echo '<h3>Listing of wine that have no order recorded</h3>';
 		
-		//echo $query . '<br>';
 
 		$result = mysql_query($query, $dbconn);
 		if(mysql_num_rows($result)>0)
