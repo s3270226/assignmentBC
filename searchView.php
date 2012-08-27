@@ -9,7 +9,7 @@ $smarty->compile_dir = "Smarty-Work-Dir/templates_c";
 $smarty->cache_dir = "Smarty-Work-Dir/cache";
 $smarty->config_dir = "Smarty-Work-Dir/configs";
 
-//region
+//region querying
 $query = "SELECT * FROM region";
 $result = mysql_query($query, $dbconn);
 $cart = array();
